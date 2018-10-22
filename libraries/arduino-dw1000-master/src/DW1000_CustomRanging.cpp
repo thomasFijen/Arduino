@@ -2,7 +2,7 @@
 *		-------------------------- DW1000 CustomRanging.cpp --------------------------
 *		Written by: Thomas Fijen 
 *		Created on: 28/03/2018
-*		These are custom made functions that are used to setup and preform ranging on the decawave DW1000 UWB. This must be used in 		*		conjuntion with the DW1000 libruary obtained from: https://github.com/thotro/arduino-dw1000.
+*		These are custom made functions that are used to setup and preform ranging on the decawave DW1000 UWB. This must be used in conjuntion with the DW1000 libruary obtained from: https://github.com/thotro/arduino-dw1000.
 */
 
 #include "DW1000_CustomRanging.h"

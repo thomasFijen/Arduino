@@ -11,7 +11,7 @@
 #include "DW1000Mac.h"
 
 //Max devices we put in the networkDevices array ! Each DW1000Device is 74 Bytes in SRAM memory for now.
-#define MAX_DEVICES 4
+#define MAX_DEVICES 4//4
 
 //sketch type (anchor or tag)
 #define TAG 0
