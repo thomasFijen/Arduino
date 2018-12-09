@@ -29,13 +29,14 @@
 // State types (corresponding to message types being exchanged over serial)
 #define X 0
 #define Y 1
-//#define Z 2
+#define D 2
 #define R 3
 
 // Struct that holds the state of a certain node
 struct State{
 	float x;
 	float y;
+	float d;
 	float r;
 	boolean stateUpdate[STATE_VAR_SIZE];
 };
@@ -61,7 +62,7 @@ public:
 
 	// Setters
 	void setStatus(uint8_t status);
-	void setState(float x, float y, float r=0.0); // Default r = 0.0. This allows easy using of the same node class when the node is the current device.
+	void setState(float x, float y, float d=0.0,float r=0.0); // Default r = 0.0. This allows easy using of the same node class when the node is the current device.
 	void setSingleState(float value, uint8_t type);
 	void setRange(float range);
 

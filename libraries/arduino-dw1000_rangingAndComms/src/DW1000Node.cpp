@@ -66,8 +66,8 @@ void DW1000Node::setStatus(uint8_t status){
 	return;
 }
 
-void DW1000Node::setState(float x, float y, float r){
-	_state.x = x; _state.y = y; _state.r = r;
+void DW1000Node::setState(float x, float y, float d, float r){
+	_state.x = x; _state.y = y; _state.d = d; _state.r = r;
 	for (uint8_t i = 0; i<STATE_VAR_SIZE;i++){
 		_state.stateUpdate[i] = true;
 	}
@@ -77,7 +77,7 @@ void DW1000Node::setSingleState(float value, uint8_t type){
 	switch(type){
 	case X: _state.x = value; _state.stateUpdate[X]=true; break;
 	case Y: _state.y = value; _state.stateUpdate[Y]=true; break;
-	// case Z: _state.z = value; _state.stateUpdate[Z]=true; break;
+	case D: _state.d = value; _state.stateUpdate[D]=true; break;
 	case R: _state.r = value; _state.stateUpdate[R]=true; break;
 	}
 }

@@ -292,6 +292,7 @@ void ConnectedRangingClass::handleReceivedData(){
 
 
 	retrieveState(&datapointer); // Get the state information from the sending node (stored at start of message)
+
 	
 	/* Send the positional information for tags over the UART */
 	if (_lastNode->getVeryShortAddress() > NUM_ANCHORS && _selfNode.getVeryShortAddress() > NUM_ANCHORS){
@@ -300,11 +301,21 @@ void ConnectedRangingClass::handleReceivedData(){
 		State* remoteState = _lastNode->getState();
 
 		SerialCoder.sendFloat2(X,messageFrom,remoteState->x);
-    	SerialCoder.sendFloat2(Y,messageFrom,remoteState->y);
+   		SerialCoder.sendFloat2(Y,messageFrom,remoteState->y);
+   		SerialCoder.sendFloat2(D,messageFrom,remoteState->d);
 
-	    // Serial.print(F("State x, y is: ")); Serial.print(remoteState->x);Serial.print(F(", "));
-	    // Serial.print(remoteState->y);
-	    // Serial.print(F(" m, update frequency is: "));Serial.print(_lastNode->getRangeFrequency()); Serial.println(F(" Hz"));  
+	     //Serial.print(F("State x, y is: ")); Serial.print(remoteState->x);Serial.print(F(", "));
+	     //Serial.print(remoteState->y);
+	     //Serial.print(F(" m, update frequency is: "));Serial.print(_lastNode->getRangeFrequency()); Serial.println(F(" Hz"));  
+	} 
+	if (_selfNode.getVeryShortAddress() == 1) { // this is for debugging
+		_lastNode->setStatus(POS_RECIEVED);
+		uint8_t messageFrom = _lastNode->getVeryShortAddress();
+		State* remoteState = _lastNode->getState();
+		Serial.print(F("State x, y is: ")); Serial.print(remoteState->x);Serial.print(F(", "));
+	    Serial.print(remoteState->y);
+	    Serial.print(F(" m, Depot Flag: "));Serial.print(remoteState->d);
+	    Serial.print(F(", update frequency is: "));Serial.print(_lastNode->getRangeFrequency()); Serial.println(F(" Hz")); 
 	}
 
 	// Decode the message to extract the part of _data meant for this device
@@ -342,14 +353,14 @@ void ConnectedRangingClass::handleRanges(){
 // }
 
 void ConnectedRangingClass::retrieveState(uint16_t *ptr){
-	float x; float y;
+	float x; float y; float d;
 	memcpy(&x,_data+*ptr,FLOAT_SIZE);
 	*ptr += 4;
 	memcpy(&y,_data+*ptr,FLOAT_SIZE);
 	*ptr += 4;
-	// memcpy(&z,_data+*ptr,FLOAT_SIZE);
-	// *ptr += 4;
-	_lastNode->setState(x,y);
+	memcpy(&d,_data+*ptr,FLOAT_SIZE);
+	*ptr += 4;
+	_lastNode->setState(x,y,d);
 }
 
 // If a part of the message was not for the current device, skip the pointer ahead to next block of _data
@@ -468,8 +479,8 @@ void ConnectedRangingClass::addStateToData(uint16_t *ptr){
 	*ptr += FLOAT_SIZE;
 	memcpy(_data+*ptr,&(selfState->y),FLOAT_SIZE);
 	*ptr += FLOAT_SIZE;
-	// memcpy(_data+*ptr,&(selfState->z),FLOAT_SIZE);
-	// *ptr += FLOAT_SIZE;
+	memcpy(_data+*ptr,&(selfState->d),FLOAT_SIZE);
+	*ptr += FLOAT_SIZE;
 }
 
 void ConnectedRangingClass::addMessageToData(uint16_t *ptr, DW1000Node *distantNode){

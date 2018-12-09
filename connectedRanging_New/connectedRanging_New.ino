@@ -1,14 +1,14 @@
 #include <ConnectedRanging.h>
 
-uint8_t numNodes = 3;
-uint8_t veryShortAddress = 2;
+uint8_t numNodes = 6;
+uint8_t veryShortAddress = 4;
 
-uint8_t debug = 0;
+uint8_t debug = 1;
 
 void setup() {
   Serial.begin(57600);
   ConnectedRanging.init(veryShortAddress,numNodes);
-  ConnectedRanging.setSelfState(4.0,4.0);
+  ConnectedRanging.setSelfState(2.0,2.0);
   ConnectedRanging.attachNewRange(newRange);
 
 }
@@ -25,13 +25,14 @@ void newRange(){
   if (debug == 0){
     SerialCoder.sendFloat2(R,messageFrom,remoteState->r);
     SerialCoder.sendFloat2(X,messageFrom,remoteState->x);
-    SerialCoder.sendFloat2(Y,messageFrom,remoteState->y);  
+    SerialCoder.sendFloat2(Y,messageFrom,remoteState->y);
+    SerialCoder.sendFloat2(D,messageFrom,remoteState->d);   
   }else {
     Serial.print(F(" Range to ")); Serial.print(messageFrom);Serial.print(F(" is: ")); Serial.print(remoteState->r);
     Serial.print(F(" m, state x, y is: ")); Serial.print(remoteState->x);Serial.print(F(", "));
     Serial.print(remoteState->y);
-    Serial.print(F(" m, update frequency is: "));Serial.print(lastNode->getRangeFrequency()); Serial.println(F(" Hz"));  
-    
+    Serial.print(F(" m, update frequency is: "));Serial.print(lastNode->getRangeFrequency()); Serial.print(F(" Hz"));   
+    Serial.print(F(", Depot Flag = ")); Serial.println(remoteState->d);
   }
   
 }
