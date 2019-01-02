@@ -1,7 +1,7 @@
 #include <ConnectedRanging.h>
 
 uint8_t numNodes = 2;
-uint8_t veryShortAddress = 1;
+uint8_t veryShortAddress = 2;
 
 
 void setup() {

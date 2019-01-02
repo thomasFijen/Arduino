@@ -1,14 +1,14 @@
 #include <ConnectedRanging.h>
 
-uint8_t numNodes = 6;
+uint8_t numNodes = 4;
 uint8_t veryShortAddress = 4;
 
-uint8_t debug = 1;
+uint8_t debug = 0;
 
 void setup() {
   Serial.begin(57600);
   ConnectedRanging.init(veryShortAddress,numNodes);
-  ConnectedRanging.setSelfState(2.0,2.0);
+  ConnectedRanging.setSelfState(2,2);
   ConnectedRanging.attachNewRange(newRange);
 
 }

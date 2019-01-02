@@ -304,9 +304,9 @@ void ConnectedRangingClass::handleReceivedData(){
    		SerialCoder.sendFloat2(Y,messageFrom,remoteState->y);
    		SerialCoder.sendFloat2(D,messageFrom,remoteState->d);
 
-	     //Serial.print(F("State x, y is: ")); Serial.print(remoteState->x);Serial.print(F(", "));
-	     //Serial.print(remoteState->y);
-	     //Serial.print(F(" m, update frequency is: "));Serial.print(_lastNode->getRangeFrequency()); Serial.println(F(" Hz"));  
+	     // Serial.print(F("State x, y is: ")); Serial.print(remoteState->x);Serial.print(F(", "));
+	     // Serial.print(remoteState->y);
+	     // Serial.print(F(" m, update frequency is: "));Serial.print(_lastNode->getRangeFrequency()); Serial.println(F(" Hz"));  
 	} 
 	if (_selfNode.getVeryShortAddress() == 1) { // this is for debugging
 		_lastNode->setStatus(POS_RECIEVED);
@@ -329,6 +329,12 @@ void ConnectedRangingClass::handleReceivedData(){
 			processMessage(messagefrom,&datapointer);
 		}
 	}
+		// uint8_t messageFrom = _lastNode->getVeryShortAddress();
+		// State* remoteState = _lastNode->getState();
+		// uint8_t tempState = _selfNode.getStatus();
+		// Serial.print(F("My Status: ")); Serial.print(tempState);
+		// tempState = _lastNode->getStatus();
+		// Serial.print(F(", Others Status: ")); Serial.println(tempState);
 }
 
 void ConnectedRangingClass::handleRanges(){
@@ -421,17 +427,17 @@ void ConnectedRangingClass::processMessage(uint8_t msgfrom, uint16_t *ptr){
 	}
 	else if(msgtype == RANGE_REPORT){
 		_lastNode->setStatus(RANGE_REPORT_RECEIVED);
-		// float curRange;
-		// memcpy(&curRange, _data+*ptr, 4);
-		// *ptr += 4;
-		// _lastNode->setRange(curRange);
-		// if(_handleNewRange == 0){
-		// 	Serial.print(F(" Range to device ")); Serial.print(_lastNode->getVeryShortAddress());Serial.print(F(" is: ")); Serial.print(curRange);
-		// 	Serial.print(F(" m, update frequency is: "));Serial.print(_lastNode->getRangeFrequency()); Serial.println(F(" Hz"));
-		// }
-		// else{
-		// 	_handleNewRange();
-		// }
+		float curRange;
+		memcpy(&curRange, _data+*ptr, 4);
+		*ptr += 4;
+		_lastNode->setRange(curRange);
+		if(_handleNewRange == 0){
+			Serial.print(F(" Range to device ")); Serial.print(_lastNode->getVeryShortAddress());Serial.print(F(" is: ")); Serial.print(curRange);
+			Serial.print(F(" m, update frequency is: "));Serial.print(_lastNode->getRangeFrequency()); Serial.println(F(" Hz"));
+		}
+		else{
+			_handleNewRange();
+		}
 	}
 	else if(msgtype == RECEIVE_FAILED){
 		_lastNode->setStatus(INIT_STATUS);
@@ -486,6 +492,17 @@ void ConnectedRangingClass::addStateToData(uint16_t *ptr){
 void ConnectedRangingClass::addMessageToData(uint16_t *ptr, DW1000Node *distantNode){
 	byte currentAddress = _selfNode.getVeryShortAddress();
 	byte distantAddress = distantNode->getVeryShortAddress();
+		// switch(distantNode->getStatus()){
+		// 	case INIT_STATUS : addPollMessage(ptr, distantNode); break;
+		// 	case POLL_SENT : addReceiveFailedMessage(ptr, distantNode); break;
+		// 	case POLL_RECEIVED : addPollAckMessage(ptr, distantNode); break;
+		// 	case POLL_ACK_SENT : addReceiveFailedMessage(ptr, distantNode); break;
+		// 	case POLL_ACK_RECEIVED : addRangeMessage(ptr, distantNode); break;
+		// 	case RANGE_SENT : addReceiveFailedMessage(ptr, distantNode); break;
+		// 	case RANGE_RECEIVED : addRangeReportMessage(ptr, distantNode); break;
+		// 	case RANGE_REPORT_SENT : addReceiveFailedMessage(ptr,distantNode); break;
+		// 	case RANGE_REPORT_RECEIVED : addPollMessage(ptr,distantNode); break;
+		// }
 
 	if(distantAddress > NUM_ANCHORS &&  currentAddress <= NUM_ANCHORS){ 
 		switch(distantNode->getStatus()){
@@ -502,7 +519,7 @@ void ConnectedRangingClass::addMessageToData(uint16_t *ptr, DW1000Node *distantN
 	}
 	else if(currentAddress > NUM_ANCHORS &&  distantAddress <= NUM_ANCHORS) { //If the nodes are TAGS, then do not perform ranging
 		switch(distantNode->getStatus()){
-			//case INIT_STATUS : addPollMessage(ptr, distantNode); break;
+			case INIT_STATUS : addPollMessage(ptr, distantNode); break;
 			case POLL_SENT : addReceiveFailedMessage(ptr, distantNode); break;
 			case POLL_RECEIVED : addPollAckMessage(ptr, distantNode); break;
 			case POLL_ACK_SENT : addReceiveFailedMessage(ptr, distantNode); break;
@@ -554,9 +571,9 @@ void ConnectedRangingClass::addRangeReportMessage(uint16_t *ptr, DW1000Node *dis
 	byte toSend[2] = {distantNode->getVeryShortAddress(),RANGE_REPORT};
 	memcpy(_data+*ptr,&toSend,2);
 	*ptr += 2;
-	// float range = distantNode->getRange();
-	// memcpy(_data+*ptr,&range,4);
-	// *ptr += 4;
+	float range = distantNode->getRange();
+	memcpy(_data+*ptr,&range,4);
+	*ptr += 4;
 }
 
 void ConnectedRangingClass::addReceiveFailedMessage(uint16_t *ptr, DW1000Node *distantNode){

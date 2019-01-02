@@ -39,8 +39,8 @@
 #define FLOAT_SIZE 4
 
 // maximum number of nodes that can be connected. Warning: Consumes a lot of SRAM. Need to optimize if going beyond 4 nodes.
-#define MAX_NODES 6
-#define NUM_ANCHORS 4
+#define MAX_NODES 4
+#define NUM_ANCHORS 1
 //#define MAX_LEN_DATA (NUM_ANCHORS)*RANGE_SIZE+NUM_ANCHORS+STATE_SIZE //or (numTags * range_size) if there are more tags than anchors
 // #define MAX_LEN_DATA (MAX_NODES)*RANGE_SIZE+MAX_NODES+STATE_SIZE 
 // #define MAX_LEN_DATA (MAX_NODES-NUM_ANCHORS)*RANGE_SIZE+MAX_NODES+STATE_SIZE
